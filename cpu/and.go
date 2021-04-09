@@ -3,16 +3,12 @@ package cpu
 func bitwiseAnd(c *CPU, v uint8) {
 	a := c.A & v
 	c.A = uint8(a)
-	if c.A == 0 {
-		c.Z = true
-	}
-	if c.A > 127 {
-		c.N = true
-	}
+	c.Z = c.A == 0
+	c.N = c.A&0x80 > 0
 }
 
 func ANDImmediate(c *CPU, m Memory) {
-	v := m.Fetch(c.PC)
+	v := m.Fetch(addrI(c, m))
 	bitwiseAnd(c, v)
 }
 
@@ -22,7 +18,7 @@ func ANDZP(c *CPU, m Memory) {
 }
 
 func ANDZPX(c *CPU, m Memory) {
-	v := m.Fetch(addrZP(c, m))
+	v := m.Fetch(addrZPX(c, m))
 	bitwiseAnd(c, v)
 }
 

@@ -1,17 +1,27 @@
 package cpu
 
+import (
+	"fmt"
+	"reflect"
+	"runtime"
+)
+
 type instruction struct {
 	I func(*CPU, Memory)
-	C uint
+	C int
 	B uint16
 }
 
-func (i instruction) Execute(c *CPU, clock Clock, m Memory) bool {
+func (i instruction) Execute(c *CPU, clock *Clock, m Memory) bool {
+	fmt.Printf("Running instruction %v\n", runtime.FuncForPC(reflect.ValueOf(i.I).Pointer()).Name())
+	c.PC++
+	fmt.Printf("Before PC: 0x%x\n", c.PC)
+	i.I(c, m)
+	fmt.Printf("After PC: 0x%x\n", c.PC)
 	if !clock.Tick(i.C) {
+		fmt.Printf("No more clock ticks\n")
 		return false
 	}
-	i.I(c, m)
-	c.PC += i.B
 	return true
 }
 
@@ -153,14 +163,14 @@ var instructionTable = map[byte]instruction{
 	0x7E: {RORAX, 7, 3},
 	0x40: {RTI, 6, 1},
 	0x60: {RTS, 6, 1},
-	0xE9: {SECImmediate, 2, 2},
-	0xE5: {SECZP, 3, 2},
-	0xF5: {SECZPX, 4, 2},
-	0xED: {SECA, 4, 3},
-	0xFD: {SECAX, 4, 3},
-	0xF9: {SECAY, 4, 3},
-	0xE1: {SECIX, 6, 2},
-	0xF1: {SECIY, 5, 2},
+	0xE9: {SUBImmediate, 2, 2},
+	0xE5: {SUBZP, 3, 2},
+	0xF5: {SUBZPX, 4, 2},
+	0xED: {SUBA, 4, 3},
+	0xFD: {SUBAX, 4, 3},
+	0xF9: {SUBAY, 4, 3},
+	0xE1: {SUBIX, 6, 2},
+	0xF1: {SUBIY, 5, 2},
 	0xAA: {TAX, 2, 1},
 	0xA8: {TAY, 2, 1},
 	0xBA: {TSX, 2, 1},

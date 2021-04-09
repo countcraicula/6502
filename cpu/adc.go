@@ -37,19 +37,13 @@ func addBinary(c *CPU, v uint8) {
 		a++
 		c.C = false
 	}
-	if a < 127 && v < 127 {
-		if a > 127 {
-			c.V = true
-		}
-	}
-	if a > 0xFF {
-		c.C = true
-	}
+	c.V = (c.A^uint8(a))&(v^uint8(a))&0x80 > 0
+	c.C = a > 0xFF
 	c.A = uint8(a)
 }
 
 func ADCImmediate(c *CPU, m Memory) {
-	v := m.Fetch(c.PC)
+	v := m.Fetch(addrI(c, m))
 	addWithCarry(c, v)
 }
 

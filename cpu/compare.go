@@ -2,19 +2,14 @@ package cpu
 
 func compare(c *CPU, i, v uint8) {
 	r := int8(i - v)
-	if r >= 0 {
-		c.C = true
-
-	}
-	if r == 0 {
-		c.Z = true
-	}
-
+	c.C = r >= 0
+	c.Z = r == 0
 	c.N = r < 0
 }
 
 func CMPImmediate(c *CPU, m Memory) {
-	compare(c, c.A, m.Fetch(c.PC))
+	addr := addrI(c, m)
+	compare(c, c.A, m.Fetch(addr))
 }
 
 func CMPZP(c *CPU, m Memory) {
@@ -53,7 +48,8 @@ func CMPIY(c *CPU, m Memory) {
 }
 
 func CPXImmediate(c *CPU, m Memory) {
-	compare(c, c.X, m.Fetch(c.PC))
+	addr := addrI(c, m)
+	compare(c, c.X, m.Fetch(addr))
 }
 
 func CPXZP(c *CPU, m Memory) {
@@ -67,7 +63,8 @@ func CPXA(c *CPU, m Memory) {
 }
 
 func CPYImmediate(c *CPU, m Memory) {
-	compare(c, c.Y, m.Fetch(c.PC))
+	addr := addrI(c, m)
+	compare(c, c.Y, m.Fetch(addr))
 }
 
 func CPYZP(c *CPU, m Memory) {

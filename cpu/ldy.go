@@ -1,16 +1,12 @@
 package cpu
 
 func setFlagsLDY(c *CPU) {
-	if c.Y > 127 {
-		c.N = true
-	}
-	if c.Y == 0 {
-		c.Z = true
-	}
+	c.N = c.Y&0x80 > 0
+	c.Z = c.Y == 0
 }
 
 func LDYImmediate(c *CPU, m Memory) {
-	c.Y = m.Fetch(c.PC)
+	c.Y = m.Fetch(addrI(c, m))
 	setFlagsLDY(c)
 }
 

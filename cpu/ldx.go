@@ -1,16 +1,12 @@
 package cpu
 
 func setFlagsLDX(c *CPU) {
-	if c.X > 127 {
-		c.N = true
-	}
-	if c.X == 0 {
-		c.Z = true
-	}
+	c.N = c.X&0x80 > 0
+	c.Z = c.X == 0
 }
 
 func LDXImmediate(c *CPU, m Memory) {
-	c.X = m.Fetch(c.PC)
+	c.X = m.Fetch(addrI(c, m))
 	setFlagsLDX(c)
 }
 
@@ -30,6 +26,6 @@ func LDXA(c *CPU, m Memory) {
 }
 
 func LDXAY(c *CPU, m Memory) {
-	c.X = m.Fetch(addrZPY(c, m))
+	c.X = m.Fetch(addrAY(c, m))
 	setFlagsLDX(c)
 }

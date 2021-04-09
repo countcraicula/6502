@@ -1,44 +1,87 @@
 package cpu
 
-type Clock uint
+import "fmt"
 
-func (c Clock) Tick(count uint) bool {
-	i := Clock(count)
-	if c > i {
-		c -= i
+type Clock struct {
+	count      uint
+	num        int
+	singleStep bool
+	stepped    bool
+}
+
+func NewClock(i int, singleStep bool) *Clock {
+	return &Clock{
+		num:        i,
+		singleStep: singleStep,
+	}
+}
+
+func (c *Clock) Tick(count int) bool {
+	if c.singleStep && !c.stepped {
+		c.stepped = true
+		c.count += uint(count)
 		return true
 	}
-	c = 0
+	if c.stepped {
+		return false
+	}
+
+	c.count += uint(count)
+	if c.num < 0 {
+		fmt.Printf("Unlimited clock cycle mode: current count %v\n", c.count)
+		return true
+	}
+	if c.num > count {
+		c.num -= count
+		fmt.Printf("Clock cycles remaining: %v, total %v\n", c.num, c.count)
+		return true
+	}
+	c.num = 0
 	return false
 }
 
-func (c Clock) Add(i uint) {
-	c += Clock(i)
+func (c *Clock) Step() {
+	c.stepped = false
+}
+
+func (c *Clock) Add(i int) {
+	c.num += i
 }
 
 type CPU struct {
-	PC                  uint16
-	SP                  uint8
-	A, X, Y             uint8
-	C, Z, I, D, B, V, N bool
+	PC               uint16
+	SP               uint8
+	IR               uint8
+	A, X, Y          uint8
+	C, Z, I, D, V, N bool
 }
 
 const SPOffset = 0x0100
 
-func (c *CPU) Reset() {
-	c.PC = 0xFFFC
-	c.SP = 0x00
+func (c *CPU) Reset(m Memory) {
+	//	c.PC = m.Fetch16(0xFFFC)
+	c.PC = 0x0400
+	c.SP = 0xFD
 	c.D = false
 }
 
-func (c *CPU) Execute(clock Clock, m Memory) {
-
-	for clock > 0 {
-		b := m.Fetch(c.PC)
-		if !instructionTable[b].Execute(c, clock, m) {
+func (c *CPU) Execute(clock *Clock, m Memory) {
+	for {
+		pc := c.PC
+		c.IR = m.Fetch(c.PC)
+		ins, ok := instructionTable[c.IR]
+		if !ok {
+			fmt.Printf("Unknown instruction 0x%x\n", c.IR)
 			return
 		}
-		c.PC++
+		fmt.Printf("PC: 0x%x, SP: 0x%x, IR:0x%x, A: 0x%x, X: 0x%x, Y: 0x%x, C: %v, Z: %v, I: %v, D: %v,  V: %v, N: %v\n", c.PC, c.SP, c.IR, c.A, c.X, c.Y, c.C, c.Z, c.I, c.D, c.V, c.N)
+		if !ins.Execute(c, clock, m) {
+			return
+		}
+		if c.PC == pc {
+			fmt.Printf("Caught in a loop\n")
+			return
+		}
 	}
 }
 
@@ -56,14 +99,13 @@ func (c *CPU) GetFlags() uint8 {
 	if c.D {
 		v |= 0x8
 	}
-	if c.B {
-		v |= 0x10
-	}
+	v |= 0x10 // B only changed by interrupts.
+	v |= 0x20 // Unregistered bit
 	if c.V {
-		v |= 0x20
+		v |= 0x40
 	}
 	if c.N {
-		v |= 0x40
+		v |= 0x80
 	}
 	return v
 }
@@ -73,8 +115,7 @@ func (c *CPU) SetFlags(v uint8) {
 	c.Z = v&0x2 > 0
 	c.I = v&0x4 > 0
 	c.D = v&0x8 > 0
-	c.B = v&0x10 > 0
-	c.V = v&0x20 > 0
-	c.N = v&0x40 > 0
+	c.V = v&0x40 > 0
+	c.N = v&0x80 > 0
 
 }

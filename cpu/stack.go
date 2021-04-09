@@ -7,26 +7,29 @@ func push(c *CPU, m Memory, v uint8) {
 }
 
 func pull(c *CPU, m Memory) uint8 {
-	v := m.Fetch(SPOffset + uint16(c.SP))
 	c.SP++
+	v := m.Fetch(SPOffset + uint16(c.SP))
 	return v
 }
 
 func BRK(c *CPU, m Memory) {
-	c.B = true
-	push(c, m, uint8(c.PC>>8))
-	push(c, m, uint8(c.PC&0xFF))
-	push(c, m, c.GetFlags())
+	pc := c.PC + 1
+	push(c, m, uint8(pc>>8))
+	push(c, m, uint8(pc&0xFF))
+	v := c.GetFlags()
+	v |= 0x10
+	push(c, m, v)
+	c.I = true
 	c.PC = m.Fetch16(0xFFFE)
 }
 
 func RTI(c *CPU, m Memory) {
 	c.SetFlags(pull(c, m))
-	c.PC = (uint16(pull(c, m))<<8 + uint16(pull(c, m)))
+	c.PC = (uint16(pull(c, m)) + uint16(pull(c, m))<<8)
 }
 
 func RTS(c *CPU, m Memory) {
-	c.PC = (uint16(pull(c, m))<<8 + uint16(pull(c, m)))
+	c.PC = (uint16(pull(c, m)) + uint16(pull(c, m))<<8) + 1
 }
 
 func PHA(c *CPU, m Memory) {
@@ -39,6 +42,8 @@ func PHP(c *CPU, m Memory) {
 
 func PLA(c *CPU, m Memory) {
 	c.A = pull(c, m)
+	c.Z = c.A == 0
+	c.N = c.A&0x80 > 0
 }
 
 func PLP(c *CPU, m Memory) {

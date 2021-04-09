@@ -1,7 +1,7 @@
 package cpu
 
 func shiftRight(c *CPU, v uint8) uint8 {
-	c.C = v&0x00 > 0
+	c.C = v&0x01 > 0
 	a := v >> 1
 	c.N = a&0x80 > 0
 	c.Z = a == 0

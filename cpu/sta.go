@@ -26,5 +26,4 @@ func STAIX(c *CPU, m Memory) {
 
 func STAIY(c *CPU, m Memory) {
 	m.Store(addrIY(c, m), c.A)
-	setFlagsLDA(c)
 }

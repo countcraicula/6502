@@ -1,19 +1,33 @@
 package cpu
 
+func addrI(c *CPU, m Memory) uint16 {
+	v := c.PC
+	c.PC++
+	return v
+}
+
 func addrZP(c *CPU, m Memory) uint16 {
-	return uint16(m.Fetch(c.PC))
+	v := uint16(m.Fetch(c.PC))
+	c.PC++
+	return v
 }
 
 func addrZPX(c *CPU, m Memory) uint16 {
-	return uint16(m.Fetch(c.PC) + c.X)
+	v := uint16(m.Fetch(c.PC) + c.X)
+	c.PC++
+	return v
 }
 
 func addrZPY(c *CPU, m Memory) uint16 {
-	return uint16(m.Fetch(c.PC) + c.Y)
+	v := uint16(m.Fetch(c.PC) + c.Y)
+	c.PC++
+	return v
 }
 
 func addrA(c *CPU, m Memory) uint16 {
-	return m.Fetch16(uint16(c.PC) + uint16(c.PC+1)<<8)
+	v := m.Fetch16(c.PC)
+	c.PC += 2
+	return v
 }
 
 func addrAX(c *CPU, m Memory) uint16 {
@@ -25,9 +39,14 @@ func addrAY(c *CPU, m Memory) uint16 {
 }
 
 func addrIX(c *CPU, m Memory) uint16 {
-	return uint16(m.Fetch(c.PC) + c.X)
+	v := uint16(m.Fetch(c.PC) + c.X)
+	c.PC++
+	return m.Fetch16(v)
 }
 
 func addrIY(c *CPU, m Memory) uint16 {
-	return uint16(m.Fetch(uint16(m.Fetch(c.PC)))) + uint16(c.Y)
+	z := uint16(m.Fetch(c.PC))
+	v := m.Fetch16(z) + uint16(c.Y)
+	c.PC++
+	return v
 }

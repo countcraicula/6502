@@ -11,8 +11,8 @@ func JMPI(c *CPU, m Memory) {
 }
 
 func JSR(c *CPU, m Memory) {
-	pc := c.PC - 1
-	push(c, m, uint8(pc&0xFF))
+	pc := c.PC + 1
 	push(c, m, uint8(pc>>8))
+	push(c, m, uint8(pc&0xFF))
 	c.PC = addrA(c, m)
 }

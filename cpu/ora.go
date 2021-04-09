@@ -8,7 +8,7 @@ func inclusiveOR(c *CPU, v uint8) {
 }
 
 func ORAImmediate(c *CPU, m Memory) {
-	inclusiveOR(c, m.Fetch(c.PC))
+	inclusiveOR(c, m.Fetch(addrI(c, m)))
 }
 
 func ORAZP(c *CPU, m Memory) {

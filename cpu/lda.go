@@ -1,16 +1,12 @@
 package cpu
 
 func setFlagsLDA(c *CPU) {
-	if c.A > 127 {
-		c.N = true
-	}
-	if c.A == 0 {
-		c.Z = true
-	}
+	c.N = c.A&0x80 > 0
+	c.Z = c.A == 0
 }
 
 func LDAImmediate(c *CPU, m Memory) {
-	c.A = m.Fetch(c.PC)
+	c.A = m.Fetch(addrI(c, m))
 	setFlagsLDA(c)
 }
 

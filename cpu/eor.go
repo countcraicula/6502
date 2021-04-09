@@ -8,7 +8,7 @@ func exclusiveOR(c *CPU, v uint8) {
 }
 
 func EORImmediate(c *CPU, m Memory) {
-	exclusiveOR(c, m.Fetch(c.PC))
+	exclusiveOR(c, m.Fetch(addrI(c, m)))
 }
 
 func EORZP(c *CPU, m Memory) {
