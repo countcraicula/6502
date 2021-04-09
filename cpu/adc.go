@@ -1,6 +1,37 @@
 package cpu
 
 func addWithCarry(c *CPU, v uint8) {
+	if c.D {
+		addBCD(c, v)
+	} else {
+		addBinary(c, v)
+	}
+	c.Z = c.A == 0
+	c.N = c.A&0x80 > 0
+}
+
+func addBCD(c *CPU, v uint8) {
+	ad1 := c.A & 0xF
+	ad2 := c.A >> 4
+	vd1 := v & 0xF
+	vd2 := v >> 4
+	carry := uint8(0)
+	rd1 := ad1 + vd1
+	if rd1 > 9 {
+		rd1 -= 10
+		carry = 1
+	}
+	rd2 := ad2 + vd2 + carry
+	carry = 0
+	if rd2 > 9 {
+		rd2 -= 10
+		carry = 1
+	}
+	c.A = rd2<<4 | rd1
+	c.C = carry > 0
+}
+
+func addBinary(c *CPU, v uint8) {
 	a := uint16(c.A) + uint16(v)
 	if c.C {
 		a++
@@ -15,12 +46,6 @@ func addWithCarry(c *CPU, v uint8) {
 		c.C = true
 	}
 	c.A = uint8(a)
-	if c.A == 0 {
-		c.Z = true
-	}
-	if c.A > 127 {
-		c.N = true
-	}
 }
 
 func ADCImmediate(c *CPU, m Memory) {
