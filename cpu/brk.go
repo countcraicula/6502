@@ -6,7 +6,7 @@ func push(c *CPU, m Memory, v uint8) {
 	c.SP++
 }
 
-func pop(c *CPU, m Memory) uint8 {
+func pull(c *CPU, m Memory) uint8 {
 	v := m.Fetch(SPOffset + uint16(c.SP))
 	c.SP--
 	return v
@@ -18,4 +18,20 @@ func BRK(c *CPU, m Memory) {
 	push(c, m, uint8(c.PC&0xFF))
 	push(c, m, c.GetFlags())
 	c.PC = m.Fetch16(0xFFFE)
+}
+
+func PHA(c *CPU, m Memory) {
+	push(c, m, c.A)
+}
+
+func PHP(c *CPU, m Memory) {
+	push(c, m, c.GetFlags())
+}
+
+func PLA(c *CPU, m Memory) {
+	c.A = pull(c, m)
+}
+
+func PLP(c *CPU, m Memory) {
+	c.SetFlags(pull(c, m))
 }

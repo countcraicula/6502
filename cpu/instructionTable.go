@@ -128,4 +128,17 @@ var instructionTable = map[byte]instruction{
 	0x56: {LSRZPX, 6, 2},
 	0x4E: {LSRA, 6, 3},
 	0x5E: {LSRAX, 7, 3},
+	0xEA: {func(*CPU, Memory) {}, 2, 1}, // NOP
+	0x09: {ORAImmediate, 2, 2},
+	0x05: {ORAZP, 3, 2},
+	0x15: {ORAZPX, 4, 2},
+	0x0D: {ORAA, 4, 3},
+	0x1D: {ORAAX, 4, 3},
+	0x19: {ORAAY, 4, 3},
+	0x01: {ORAIX, 6, 2},
+	0x11: {ORAIY, 5, 2},
+	0x48: {PHA, 3, 1},
+	0x08: {PHP, 3, 1},
+	0x68: {PLA, 4, 1},
+	0x28: {PLP, 4, 1},
 }
