@@ -161,4 +161,10 @@ var instructionTable = map[byte]instruction{
 	0xF9: {SECAY, 4, 3},
 	0xE1: {SECIX, 6, 2},
 	0xF1: {SECIY, 5, 2},
+	0xAA: {TAX, 2, 1},
+	0xA8: {TAY, 2, 1},
+	0xBA: {TSX, 2, 1},
+	0x8A: {TXA, 2, 1},
+	0x9A: {TXS, 2, 1},
+	0x98: {TYA, 2, 1},
 }
