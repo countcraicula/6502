@@ -32,12 +32,12 @@ func subBCD(c *CPU, v uint8) {
 }
 
 func subBinary(c *CPU, v uint8) {
-	a := int8(c.A) - int8(v) - 1
+	a := uint16(c.A) + uint16(v^0xFF)
 	if c.C {
 		a++
 	}
-	c.V = c.A > 127 && v > 127 && a >= 0
-	c.C = uint8(a) > 0xFF
+	c.V = (c.A^uint8(a))&(v^0xFF^uint8(a))&0x80 > 0
+	c.C = a > 0xFF
 	c.A = uint8(a)
 }
 
@@ -52,7 +52,7 @@ func SUBZP(c *CPU, m Memory) {
 }
 
 func SUBZPX(c *CPU, m Memory) {
-	v := m.Fetch(addrZP(c, m))
+	v := m.Fetch(addrZPX(c, m))
 	subWithCarry(c, v)
 }
 
