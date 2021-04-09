@@ -20,6 +20,15 @@ func BRK(c *CPU, m Memory) {
 	c.PC = m.Fetch16(0xFFFE)
 }
 
+func RTI(c *CPU, m Memory) {
+	c.SetFlags(pull(c, m))
+	c.PC = (uint16(pull(c, m))<<8 + uint16(pull(c, m)))
+}
+
+func RTS(c *CPU, m Memory) {
+	c.PC = (uint16(pull(c, m))<<8 + uint16(pull(c, m)))
+}
+
 func PHA(c *CPU, m Memory) {
 	push(c, m, c.A)
 }

@@ -151,4 +151,6 @@ var instructionTable = map[byte]instruction{
 	0x76: {RORZPX, 6, 2},
 	0x6E: {RORA, 6, 3},
 	0x7E: {RORAX, 7, 3},
+	0x40: {RTI, 6, 1},
+	0x60: {RTS, 6, 1},
 }
