@@ -76,4 +76,5 @@ var instructionTable = map[byte]instruction{
 	0x10: {BPL, 2},
 	0x50: {BVC, 2},
 	0x70: {BVS, 2},
+	0x00: {BRK, 1},
 }
