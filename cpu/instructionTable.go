@@ -123,4 +123,9 @@ var instructionTable = map[byte]instruction{
 	0x59: {EORAY, 4, 3},
 	0x41: {EORIX, 6, 2},
 	0x51: {EORIY, 5, 2},
+	0x4A: {LSRAccumulator, 2, 1},
+	0x46: {LSRZP, 5, 2},
+	0x56: {LSRZPX, 6, 2},
+	0x4E: {LSRA, 6, 3},
+	0x5E: {LSRAX, 7, 3},
 }
