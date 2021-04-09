@@ -29,7 +29,7 @@ var instructionTable = map[byte]instruction{
 	0xBE: {LDXAY, 4},
 	0xA0: {LDYImmediate, 2},
 	0xA4: {LDYZP, 3},
-	0xB8: {LDYZPX, 4},
+	0xB4: {LDYZPX, 4},
 	0xAC: {LDYA, 4},
 	0xBC: {LDYAX, 4},
 	0x85: {STAZP, 3},
@@ -79,7 +79,7 @@ var instructionTable = map[byte]instruction{
 	0x00: {BRK, 7},
 	0x18: {CLC, 2},
 	0xD8: {CLD, 2},
-	0x58: {CLI, 2}
+	0x58: {CLI, 2},
 	0xB8: {CLV, 2},
 	0x38: {SEC, 2},
 	0xF8: {SED, 2},
