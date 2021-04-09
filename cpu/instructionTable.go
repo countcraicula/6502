@@ -115,4 +115,12 @@ var instructionTable = map[byte]instruction{
 	0x4C: {JMPA, 3, 3},
 	0x6C: {JMPI, 5, 3},
 	0x20: {JSR, 6, 3},
+	0x49: {EORImmediate, 2, 2},
+	0x45: {EORZP, 3, 2},
+	0x55: {EORZPX, 4, 2},
+	0x4D: {EORA, 4, 3},
+	0x5D: {EORAX, 4, 3},
+	0x59: {EORAY, 4, 3},
+	0x41: {EORIX, 6, 2},
+	0x51: {EORIY, 5, 2},
 }
