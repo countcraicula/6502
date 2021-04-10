@@ -53,7 +53,7 @@ func ADCZP(c *CPU, m Memory) {
 }
 
 func ADCZPX(c *CPU, m Memory) {
-	v := m.Fetch(addrZP(c, m))
+	v := m.Fetch(addrZPX(c, m))
 	addWithCarry(c, v)
 }
 
