@@ -12,12 +12,13 @@ type instruction struct {
 	B uint16
 }
 
+func (i instruction) String() string {
+	return fmt.Sprintf("Instruction %v\n", runtime.FuncForPC(reflect.ValueOf(i.I).Pointer()).Name())
+}
+
 func (i instruction) Execute(c *CPU, clock *Clock, m Memory) bool {
-	fmt.Printf("Running instruction %v\n", runtime.FuncForPC(reflect.ValueOf(i.I).Pointer()).Name())
 	c.PC++
-	fmt.Printf("Before PC: 0x%x\n", c.PC)
 	i.I(c, m)
-	fmt.Printf("After PC: 0x%x\n", c.PC)
 	if !clock.Tick(i.C) {
 		fmt.Printf("No more clock ticks\n")
 		return false
@@ -25,7 +26,23 @@ func (i instruction) Execute(c *CPU, clock *Clock, m Memory) bool {
 	return true
 }
 
-var instructionTable = map[byte]instruction{
+var fastLookup = make([]*instruction, 256)
+
+func init() {
+	for i := 0; i <= 255; i++ {
+		fastLookup[i] = instructionTable[uint8(i)]
+	}
+	if EnableLogging {
+		defaultLogger = &logger{
+			buffer: make([]*state, 100),
+			len:    100,
+			head:   0,
+		}
+
+	}
+}
+
+var instructionTable = map[byte]*instruction{
 	0xA9: {LDAImmediate, 2, 2},
 	0xA5: {LDAZP, 3, 2},
 	0xB5: {LDAZPX, 4, 2},

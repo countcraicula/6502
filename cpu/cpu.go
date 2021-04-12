@@ -1,6 +1,8 @@
 package cpu
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Clock struct {
 	count      uint
@@ -28,12 +30,10 @@ func (c *Clock) Tick(count int) bool {
 
 	c.count += uint(count)
 	if c.num < 0 {
-		fmt.Printf("Unlimited clock cycle mode: current count %v\n", c.count)
 		return true
 	}
 	if c.num > count {
 		c.num -= count
-		fmt.Printf("Clock cycles remaining: %v, total %v\n", c.num, c.count)
 		return true
 	}
 	c.num = 0
@@ -65,21 +65,26 @@ func (c *CPU) Reset(m Memory) {
 	c.D = false
 }
 
+func (c *CPU) String() string {
+	return fmt.Sprintf("PC: 0x%x, SP: 0x%x, IR:0x%x, A: 0x%x, X: 0x%x, Y: 0x%x, C: %v, Z: %v, I: %v, D: %v,  V: %v, N: %v\n", c.PC, c.SP, c.IR, c.A, c.X, c.Y, c.C, c.Z, c.I, c.D, c.V, c.N)
+}
+
 func (c *CPU) Execute(clock *Clock, m Memory) {
 	for {
 		pc := c.PC
 		c.IR = m.Fetch(c.PC)
-		ins, ok := instructionTable[c.IR]
-		if !ok {
+		ins := fastLookup[c.IR]
+		if ins == nil {
 			fmt.Printf("Unknown instruction 0x%x\n", c.IR)
 			return
 		}
-		fmt.Printf("PC: 0x%x, SP: 0x%x, IR:0x%x, A: 0x%x, X: 0x%x, Y: 0x%x, C: %v, Z: %v, I: %v, D: %v,  V: %v, N: %v\n", c.PC, c.SP, c.IR, c.A, c.X, c.Y, c.C, c.Z, c.I, c.D, c.V, c.N)
 		if !ins.Execute(c, clock, m) {
 			return
 		}
+		log(c, clock)
 		if c.PC == pc {
 			fmt.Printf("Caught in a loop\n")
+			fmt.Println(defaultLogger.String())
 			return
 		}
 	}

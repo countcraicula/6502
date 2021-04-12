@@ -2,9 +2,10 @@ package main
 
 import (
 	"cpu/cpu"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"runtime/pprof"
 )
 
 func main() {
@@ -17,10 +18,11 @@ func main() {
 	m := cpu.Memory(data)
 	c.Reset(m)
 	clock := cpu.NewClock(-1, false)
-
-	for {
-		clock.Step()
-		c.Execute(clock, m)
-		fmt.Scanln()
+	f, err := os.Create("profile.dat")
+	if err != nil {
+		log.Fatal(err)
 	}
+	pprof.StartCPUProfile(f)
+	c.Execute(clock, m)
+	pprof.StopCPUProfile()
 }

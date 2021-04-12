@@ -15,20 +15,17 @@ func subBCD(c *CPU, v uint8) {
 	ad2 := c.A >> 4
 	vd1 := v & 0xF
 	vd2 := v >> 4
-	carry := uint8(0)
-	rd1 := ad1 - vd1
-	if rd1 > 9 {
-		rd1 -= 10
-		carry = 1
+	ad := int16(ad2*10 + ad1)
+	vd := int16(vd2*10 + vd1)
+	rd := ad - vd
+	if !c.C {
+		rd--
 	}
-	rd2 := ad2 - vd2 + carry
-	carry = 0
-	if rd2 > 9 {
-		rd2 -= 10
-		carry = 1
+	c.C = rd >= 0
+	if rd < 0 {
+		rd += 100
 	}
-	c.A = rd2<<4 | rd1
-	c.C = carry > 0
+	c.A = uint8((rd/10)<<4 | (rd % 10))
 }
 
 func subBinary(c *CPU, v uint8) {
