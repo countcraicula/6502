@@ -309,6 +309,7 @@ var instructionTable = map[byte]*instruction{
 	0xF0: {BEQ, addrNone, 2, 2},
 	0xF1: {SUB, addrIY, 5, 2},
 	0xF2: {SUB, addrIZ, 5, 2},
+	0xF3: {BEQ16, addrNone, 3, 3},
 	0xF4: {PHW, addrI16, 4, 3},
 	0xF5: {SUB, addrZPX, 4, 2},
 	0xF6: {INC, addrZPX, 6, 2},
