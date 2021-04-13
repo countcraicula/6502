@@ -15,7 +15,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	c := cpu.CPU{}
+	c := cpu.CPU{
+		IRQ: make(chan bool),
+	}
 	m := cpu.Memory(data)
 	c.Reset(m)
 	clock := cpu.NewClock(-1, false)

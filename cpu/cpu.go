@@ -52,8 +52,10 @@ type CPU struct {
 	PC               uint16
 	SP               uint8
 	IR               uint8
-	A, X, Y          uint8
+	A, B, X, Y, ZR   uint8
 	C, Z, I, D, V, N bool
+	Halt, Wait       bool
+	IRQ              chan bool
 }
 
 const SPOffset = 0x0100
@@ -63,6 +65,8 @@ func (c *CPU) Reset(m Memory) {
 	c.PC = 0x0400
 	c.SP = 0xFD
 	c.D = false
+	c.B = 0
+	c.ZR = 0
 }
 
 func (c *CPU) String() string {
@@ -71,6 +75,12 @@ func (c *CPU) String() string {
 
 func (c *CPU) Execute(clock *Clock, m Memory) {
 	for {
+		if c.Halt {
+			return
+		}
+		if c.Wait {
+			<-c.IRQ
+		}
 		pc := c.PC
 		c.IR = m.Fetch(c.PC)
 		ins := fastLookup[c.IR]
