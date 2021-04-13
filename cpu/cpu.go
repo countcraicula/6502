@@ -1,6 +1,7 @@
 package cpu
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -49,13 +50,15 @@ func (c *Clock) Add(i int) {
 }
 
 type CPU struct {
-	PC               uint16
-	SP               uint8
-	IR               uint8
-	A, B, X, Y, ZR   uint8
-	C, Z, I, D, V, N bool
-	Halt, Wait       bool
-	IRQ              chan bool
+	PC  uint16
+	SP  uint8
+	SPH uint8
+
+	IR                  uint8
+	A, B, X, Y, ZR      uint8
+	C, Z, E, I, D, V, N bool
+	Halt, Wait          bool
+	IRQ                 chan bool
 }
 
 const SPOffset = 0x0100
@@ -67,10 +70,35 @@ func (c *CPU) Reset(m Memory) {
 	c.D = false
 	c.B = 0
 	c.ZR = 0
+	c.SPH = 0x1
+}
+
+func (c *CPU) InstructionTable() string {
+	var buf bytes.Buffer
+	fmt.Fprint(&buf, "             ")
+	for j := 0; j < 0xF; j++ {
+		fmt.Fprintf(&buf, "0x%x          ", j)
+	}
+	fmt.Fprintln(&buf)
+	for i := 0; i < 0xF; i++ {
+		fmt.Fprintf(&buf, "0x%x          ", i)
+		for j := 0; j < 0xF; j++ {
+			k := i<<4 + j
+			fmt.Fprintf(&buf, "%-13v", fastLookup[k].Name())
+		}
+		fmt.Fprintln(&buf)
+		fmt.Fprint(&buf, "             ")
+		for j := 0; j < 0xF; j++ {
+			k := i<<4 + j
+			fmt.Fprintf(&buf, "%-13v", fastLookup[k].Mode())
+		}
+		fmt.Fprintln(&buf)
+	}
+	return buf.String()
 }
 
 func (c *CPU) String() string {
-	return fmt.Sprintf("PC: 0x%x, SP: 0x%x, IR:0x%x, A: 0x%x, X: 0x%x, Y: 0x%x, C: %v, Z: %v, I: %v, D: %v,  V: %v, N: %v\n", c.PC, c.SP, c.IR, c.A, c.X, c.Y, c.C, c.Z, c.I, c.D, c.V, c.N)
+	return fmt.Sprintf("PC: 0x%x, SPH: 0x%x, SP: 0x%x, IR:0x%x, A: 0x%x, B: 0x%x, X: 0x%x, Y: 0x%x, Z: 0x%x, C: %v, Z: %v, I: %v, D: %v,  V: %v, N: %v\n", c.PC, c.SPH, c.SP, c.IR, c.A, c.B, c.X, c.Y, c.ZR, c.C, c.Z, c.I, c.D, c.V, c.N)
 }
 
 func (c *CPU) Execute(clock *Clock, m Memory) {

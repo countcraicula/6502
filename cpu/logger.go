@@ -7,7 +7,7 @@ import (
 
 var defaultLogger *logger
 
-var EnableLogging bool = true
+var EnableLogging bool
 
 func log(c *CPU, cl *Clock) {
 	if defaultLogger != nil {

@@ -77,7 +77,22 @@ func shiftRight(c *CPU, v uint8) uint8 {
 	return a
 }
 
+func arithShiftRight(c *CPU, v uint8) uint8 {
+	c.C = v&0x01 > 0
+	v = (v >> 1) | (v & 80)
+	c.N = v&0x80 > 0
+	c.Z = v == 0
+	return v
+}
+
 func increment(c *CPU, v uint8) uint8 {
+	v++
+	c.Z = v == 0
+	c.N = v&0x80 > 0
+	return v
+}
+
+func increment16(c *CPU, v uint16) uint16 {
 	v++
 	c.Z = v == 0
 	c.N = v&0x80 > 0
@@ -92,6 +107,13 @@ func exclusiveOR(c *CPU, v uint8) {
 }
 
 func decrement(c *CPU, v uint8) uint8 {
+	v--
+	c.Z = v == 0
+	c.N = v&0x80 > 0
+	return v
+}
+
+func decrement16(c *CPU, v uint16) uint16 {
 	v--
 	c.Z = v == 0
 	c.N = v&0x80 > 0

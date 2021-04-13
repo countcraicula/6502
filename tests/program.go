@@ -28,5 +28,5 @@ func main() {
 	pprof.StartCPUProfile(f)
 	c.Execute(clock, m)
 	pprof.StopCPUProfile()
-	fmt.Println(c.String())
+	fmt.Println(c.InstructionTable())
 }

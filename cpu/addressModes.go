@@ -12,6 +12,12 @@ func addrI(c *CPU, m Memory) uint16 {
 	return v
 }
 
+func addrI16(c *CPU, m Memory) uint16 {
+	v := c.PC
+	c.PC += 2
+	return v
+}
+
 func addrZP(c *CPU, m Memory) uint16 {
 	v := uint16(m.Fetch(c.PC)) + uint16(c.B)<<8
 	c.PC++
@@ -44,20 +50,27 @@ func addrAY(c *CPU, m Memory) uint16 {
 	return addrA(c, m) + uint16(c.Y)
 }
 
-func addrIZP(c *CPU, m Memory) uint16 {
-	v := m.Fetch16(uint16(m.Fetch(c.PC)))
+func addrIZ(c *CPU, m Memory) uint16 {
+	v := uint16(m.Fetch(c.PC)+c.ZR) + (uint16(c.B) << 8)
 	c.PC++
-	return v
+	return m.Fetch16(v)
 }
 
 func addrIX(c *CPU, m Memory) uint16 {
-	v := uint16(m.Fetch(c.PC) + c.X)
+	v := uint16(m.Fetch(c.PC)+c.X) + (uint16(c.B) << 8)
 	c.PC++
 	return m.Fetch16(v)
 }
 
 func addrIY(c *CPU, m Memory) uint16 {
-	z := uint16(m.Fetch(c.PC))
+	z := uint16(m.Fetch(c.PC)) + (uint16(c.B) << 8)
+	v := m.Fetch16(z) + uint16(c.Y)
+	c.PC++
+	return v
+}
+
+func addrISY(c *CPU, m Memory) uint16 {
+	z := uint16(m.Fetch(c.PC)+c.SP) + (uint16(c.B) << 8)
 	v := m.Fetch16(z) + uint16(c.Y)
 	c.PC++
 	return v
@@ -69,4 +82,10 @@ func addrIN(c *CPU, m Memory) uint16 {
 
 func addrAIX(c *CPU, m Memory) uint16 {
 	return m.Fetch16(addrAX(c, m))
+}
+
+func addrRel(c *CPU, m Memory) uint16 {
+	v := int(c.PC) + int(int16(m.Fetch16(c.PC)))
+	c.PC += 2
+	return uint16(v & 0xFFFF)
 }

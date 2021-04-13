@@ -15,3 +15,8 @@ func (m Memory) Fetch16(addr uint16) uint16 {
 func (m Memory) Store(addr uint16, value byte) {
 	m[addr] = value
 }
+
+func (m Memory) Store16(addr uint16, value uint16) {
+	m[addr] = uint8(value >> 8)
+	m[addr+1] = uint8(value & 0xFF)
+}
