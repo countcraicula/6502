@@ -44,3 +44,9 @@ func LDAIY(c *CPU, m Memory) {
 	c.A = m.Fetch(addrIY(c, m))
 	setFlagsLDA(c)
 }
+
+func LDA(c *CPU, m Memory, mode MemoryMode) {
+	c.A = m.Fetch(mode(c, m))
+	c.N = c.A&0x80 > 0
+	c.Z = c.A == 0
+}

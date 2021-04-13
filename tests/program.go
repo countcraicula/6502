@@ -2,6 +2,7 @@ package main
 
 import (
 	"cpu/cpu"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -25,4 +26,5 @@ func main() {
 	pprof.StartCPUProfile(f)
 	c.Execute(clock, m)
 	pprof.StopCPUProfile()
+	fmt.Println(c.String())
 }

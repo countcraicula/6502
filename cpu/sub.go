@@ -38,42 +38,7 @@ func subBinary(c *CPU, v uint8) {
 	c.A = uint8(a)
 }
 
-func SUBImmediate(c *CPU, m Memory) {
-	v := m.Fetch(addrI(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBZP(c *CPU, m Memory) {
-	v := m.Fetch(addrZP(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBZPX(c *CPU, m Memory) {
-	v := m.Fetch(addrZPX(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBA(c *CPU, m Memory) {
-	v := m.Fetch(addrA(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBAX(c *CPU, m Memory) {
-	v := m.Fetch(addrAX(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBAY(c *CPU, m Memory) {
-	v := m.Fetch(addrAY(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBIX(c *CPU, m Memory) {
-	v := m.Fetch(addrIX(c, m))
-	subWithCarry(c, v)
-}
-
-func SUBIY(c *CPU, m Memory) {
-	v := m.Fetch(addrIY(c, m))
+func SUB(c *CPU, m Memory, mode MemoryMode) {
+	v := m.Fetch(mode(c, m))
 	subWithCarry(c, v)
 }

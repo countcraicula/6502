@@ -1,5 +1,10 @@
 package cpu
 
+func ADC(c *CPU, m Memory, mode MemoryMode) {
+	v := m.Fetch(mode(c, m))
+	addWithCarry(c, v)
+}
+
 func addWithCarry(c *CPU, v uint8) {
 	if c.D {
 		addBCD(c, v)
@@ -34,44 +39,4 @@ func addBinary(c *CPU, v uint8) {
 	c.V = (c.A^uint8(a))&(v^uint8(a))&0x80 > 0
 	c.C = a > 0xFF
 	c.A = uint8(a)
-}
-
-func ADCImmediate(c *CPU, m Memory) {
-	v := m.Fetch(addrI(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCZP(c *CPU, m Memory) {
-	v := m.Fetch(addrZP(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCZPX(c *CPU, m Memory) {
-	v := m.Fetch(addrZPX(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCA(c *CPU, m Memory) {
-	v := m.Fetch(addrA(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCAX(c *CPU, m Memory) {
-	v := m.Fetch(addrAX(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCAY(c *CPU, m Memory) {
-	v := m.Fetch(addrAY(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCIX(c *CPU, m Memory) {
-	v := m.Fetch(addrIX(c, m))
-	addWithCarry(c, v)
-}
-
-func ADCIY(c *CPU, m Memory) {
-	v := m.Fetch(addrIY(c, m))
-	addWithCarry(c, v)
 }

@@ -24,50 +24,20 @@ func rotateLeft(c *CPU, v uint8) uint8 {
 	return a
 }
 
+func ROR(c *CPU, m Memory, mode MemoryMode) {
+	addr := mode(c, m)
+	m.Store(addr, rotateRight(c, m.Fetch(addr)))
+}
+
 func RORAccumulator(c *CPU, m Memory) {
 	c.A = rotateRight(c, c.A)
 }
 
-func RORZP(c *CPU, m Memory) {
-	addr := addrZP(c, m)
-	m.Store(addr, rotateRight(c, m.Fetch(addr)))
-}
-
-func RORZPX(c *CPU, m Memory) {
-	addr := addrZPX(c, m)
-	m.Store(addr, rotateRight(c, m.Fetch(addr)))
-}
-
-func RORA(c *CPU, m Memory) {
-	addr := addrA(c, m)
-	m.Store(addr, rotateRight(c, m.Fetch(addr)))
-}
-
-func RORAX(c *CPU, m Memory) {
-	addr := addrAX(c, m)
-	m.Store(addr, rotateRight(c, m.Fetch(addr)))
+func ROL(c *CPU, m Memory, mode MemoryMode) {
+	addr := mode(c, m)
+	m.Store(addr, rotateLeft(c, m.Fetch(addr)))
 }
 
 func ROLAccumulator(c *CPU, m Memory) {
 	c.A = rotateLeft(c, c.A)
-}
-
-func ROLZP(c *CPU, m Memory) {
-	addr := addrZP(c, m)
-	m.Store(addr, rotateLeft(c, m.Fetch(addr)))
-}
-
-func ROLZPX(c *CPU, m Memory) {
-	addr := addrZPX(c, m)
-	m.Store(addr, rotateLeft(c, m.Fetch(addr)))
-}
-
-func ROLA(c *CPU, m Memory) {
-	addr := addrA(c, m)
-	m.Store(addr, rotateLeft(c, m.Fetch(addr)))
-}
-
-func ROLAX(c *CPU, m Memory) {
-	addr := addrAX(c, m)
-	m.Store(addr, rotateLeft(c, m.Fetch(addr)))
 }

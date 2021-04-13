@@ -1,5 +1,7 @@
 package cpu
 
+type MemoryMode func(*CPU, Memory) uint16
+
 func addrI(c *CPU, m Memory) uint16 {
 	v := c.PC
 	c.PC++

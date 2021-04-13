@@ -8,26 +8,11 @@ func shiftRight(c *CPU, v uint8) uint8 {
 	return a
 }
 
+func LSR(c *CPU, m Memory, mode MemoryMode) {
+	addr := mode(c, m)
+	m.Store(addr, shiftRight(c, m.Fetch(addr)))
+}
+
 func LSRAccumulator(c *CPU, m Memory) {
 	c.A = shiftRight(c, c.A)
-}
-
-func LSRZP(c *CPU, m Memory) {
-	addr := addrZP(c, m)
-	m.Store(addr, shiftRight(c, m.Fetch(addr)))
-}
-
-func LSRZPX(c *CPU, m Memory) {
-	addr := addrZPX(c, m)
-	m.Store(addr, shiftRight(c, m.Fetch(addr)))
-}
-
-func LSRA(c *CPU, m Memory) {
-	addr := addrA(c, m)
-	m.Store(addr, shiftRight(c, m.Fetch(addr)))
-}
-
-func LSRAX(c *CPU, m Memory) {
-	addr := addrAX(c, m)
-	m.Store(addr, shiftRight(c, m.Fetch(addr)))
 }

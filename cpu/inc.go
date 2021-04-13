@@ -7,26 +7,10 @@ func increment(c *CPU, v uint8) uint8 {
 	return v
 }
 
-func INCZP(c *CPU, m Memory) {
-	addr := addrZP(c, m)
+func INC(c *CPU, m Memory, mode MemoryMode) {
+	addr := mode(c, m)
 	m.Store(addr, increment(c, m.Fetch(addr)))
 }
-
-func INCZPX(c *CPU, m Memory) {
-	addr := addrZPX(c, m)
-	m.Store(addr, increment(c, m.Fetch(addr)))
-}
-
-func INCA(c *CPU, m Memory) {
-	addr := addrA(c, m)
-	m.Store(addr, increment(c, m.Fetch(addr)))
-}
-
-func INCAX(c *CPU, m Memory) {
-	addr := addrAX(c, m)
-	m.Store(addr, increment(c, m.Fetch(addr)))
-}
-
 func INX(c *CPU, m Memory) {
 	c.X = increment(c, c.X)
 }

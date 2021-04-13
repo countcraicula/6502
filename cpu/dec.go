@@ -7,23 +7,8 @@ func decrement(c *CPU, v uint8) uint8 {
 	return v
 }
 
-func DECZP(c *CPU, m Memory) {
-	addr := addrZP(c, m)
-	m.Store(addr, decrement(c, m.Fetch(addr)))
-}
-
-func DECZPX(c *CPU, m Memory) {
-	addr := addrZPX(c, m)
-	m.Store(addr, decrement(c, m.Fetch(addr)))
-}
-
-func DECA(c *CPU, m Memory) {
-	addr := addrA(c, m)
-	m.Store(addr, decrement(c, m.Fetch(addr)))
-}
-
-func DECAX(c *CPU, m Memory) {
-	addr := addrAX(c, m)
+func DEC(c *CPU, m Memory, mode MemoryMode) {
+	addr := mode(c, m)
 	m.Store(addr, decrement(c, m.Fetch(addr)))
 }
 
